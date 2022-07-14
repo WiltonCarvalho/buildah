@@ -1,10 +1,7 @@
 # buildah
 ```
-sudo apt install qemu-user-static podman skopeo jq docker.io
-sudo adduser $USER docker
-sudo su - $USER
+sudo apt install qemu-user-static podman skopeo jq
 
-docker ps
 podman ps
 
 echo ok > index.html
@@ -15,6 +12,7 @@ COPY index.html /usr/share/nginx/html/index.html
 RUN set -ex \
     && dpkg --print-architecture
 EOF
+
 
 # Run the lastest Buildah inside Podman
 mkdir /tmp/containers
@@ -32,6 +30,7 @@ buildah build --format=docker --jobs=2 \
 buildah manifest push --all \
   localhost:5000/website:v1 \
   oci-archive:website.tar
+
 
 # Exit Podman
 exit
@@ -69,6 +68,14 @@ skopeo inspect --tls-verify=false docker://localhost:5000/website:v1 | jq .
 podman run -it --rm --tls-verify=false -p 8080:80 localhost:5000/website:v1
 
 curl http://localhost:8080
+
+
+# Test Docker
+sudo apt install docker.io
+sudo adduser $USER docker
+sudo su - $USER
+
+docker ps
 
 skopeo copy --override-arch=amd64 \
   oci-archive:website.tar \
