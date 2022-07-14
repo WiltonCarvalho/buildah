@@ -1,4 +1,4 @@
-# buildah
+# Buildah Multi Architecture Images
 ```
 sudo apt install qemu-user-static podman skopeo jq
 
