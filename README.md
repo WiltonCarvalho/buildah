@@ -38,30 +38,6 @@ exit
 
 skopeo inspect --raw oci-archive:website.tar | jq '.manifests[].platform.architecture'
 
-skopeo copy --override-arch=amd64 \
-  oci-archive:website.tar \
-  docker-archive:website-amd64.tar
-
-skopeo inspect docker-archive:website-amd64.tar | jq
-
-skopeo copy --override-arch=arm64 \
-  oci-archive:website.tar \
-  docker-archive:website-arm64.tar
-
-skopeo inspect docker-archive:website-arm64.tar | jq
-
-docker load -i website-amd64.tar | \
-  awk -F':' '{print $NF}' | \
-  xargs -i docker tag {} website-amd64
-
-docker run -it --rm website-amd64
-
-docker load -i website-arm64.tar | \
-  awk -F':' '{print $NF}' | \
-  xargs -i docker tag {} website-arm64
-
-docker run -it --rm website-arm64
-
 podman run -d --rm --name registry -p 5000:5000 docker.io/library/registry:2
 
 skopeo copy --all \
@@ -90,5 +66,31 @@ skopeo copy --override-arch=arm64 \
 
 skopeo inspect --tls-verify=false docker://localhost:5000/website:v1 | jq .
 
-podman run -it --rm --tls-verify=false localhost:5000/website:v1
+podman run -it --rm --tls-verify=false -p 8080:80 localhost:5000/website:v1
+
+curl http://localhost:8080
+
+skopeo copy --override-arch=amd64 \
+  oci-archive:website.tar \
+  docker-archive:website-amd64.tar
+
+skopeo inspect docker-archive:website-amd64.tar | jq
+
+skopeo copy --override-arch=arm64 \
+  oci-archive:website.tar \
+  docker-archive:website-arm64.tar
+
+skopeo inspect docker-archive:website-arm64.tar | jq
+
+docker load -i website-amd64.tar | \
+  awk -F':' '{print $NF}' | \
+  xargs -i docker tag {} website-amd64
+
+docker run -it --rm website-amd64
+
+docker load -i website-arm64.tar | \
+  awk -F':' '{print $NF}' | \
+  xargs -i docker tag {} website-arm64
+
+docker run -it --rm website-arm64
 ```
