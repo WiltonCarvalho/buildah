@@ -16,7 +16,7 @@ EOF
 
 # Run the latest Buildah inside Podman
 mkdir /tmp/containers
-podman run -it --rm --privileged \
+podman run -it --rm --privileged --name buildah \
   -v $PWD:/app -w /app \
   -v /tmp/containers:/var/lib/containers \
   quay.io/buildah/stable bash
