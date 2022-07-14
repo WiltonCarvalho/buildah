@@ -14,7 +14,7 @@ RUN set -ex \
 EOF
 
 
-# Run the lastest Buildah inside Podman
+# Run the latest Buildah inside Podman
 mkdir /tmp/containers
 podman run -it --rm --privileged \
   -v $PWD:/app -w /app \
